@@ -112,6 +112,7 @@ function createTodo() {
     const span = document.createElement('span');
     const span_txt = document.createTextNode("\u00D7");
     span.classList.add("close");
+    span.setAttribute('data-span', num)
     span.appendChild(span_txt);
 
     todo_div.appendChild(span);
@@ -120,7 +121,7 @@ function createTodo() {
     num++;
 
     span.addEventListener('click', () => {
-        handleDeleteClick(todo_div, input_val)
+        handleDeleteClick(todo_div, span)
     });
 
     todo_div.addEventListener('dragstart', dragStart);
@@ -131,25 +132,25 @@ function createTodo() {
     todo_form.classList.remove('active');
     overlay.classList.remove('active');
     
-
-    // close_btns.addEventListener('click', clickItem);
-    // const close_btns = document.querySelectorAll('.close');
-    // close_btns.addEventListener('click', deleteItem);
+    updateLocalStorage();
 }
-
-const handleDeleteClick = (todo_div, input_val) => {
-    const container = document.querySelector('#no_status')
-
-    const tasks = container.childNodes;
-    const novo = tasks[5].firstChild
-
-
-    for (const task of tasks) {
-        const currentTaskIsBeingClicked = task[5].firstChild.isSameNode(input_val);
-    
-        if (currentTaskIsBeingClicked) {
-          todo_div.remove();
-        }
-      }
+const handleDeleteClick = (todo_div, span) => {
+    if(todo_div.dataset.indice == span.dataset.span) {
+        todo_div.remove()
+        updateLocalStorage();
+    }
 };
 
+const updateLocalStorage = () => {
+    const container = document.querySelector('.todo-container');
+    const tasks = container.childNodes[1];
+
+    const localStorageTasks = [tasks].map((task) => {
+        const content = task.lastChild;
+        return { description: content.innerText.slice(0, -1) }
+    
+    });
+// .innerText.slice(0, -1);
+  
+    console.log({ localStorageTasks})
+};
